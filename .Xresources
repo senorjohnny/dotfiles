@@ -1,0 +1,91 @@
+!! ~/.Xresources
+!! brotip: ln -s ~/.Xresources ~/.Xdefaults
+
+!! simple_rainbow
+!! created by nulti.korisnik
+!! got ideas from themes like zenburn and other "pastel" ones
+!!
+*background:  #575757
+!! dcdccc
+*foreground:  #D1D1C2
+!*cursorColor: #888888
+*fading:      30
+!*fadeColor:   #575757
+!! black dark/light
+*color0:      #666666
+*color8:      #888888
+!! red dark/light
+*color1:      #ff8278
+*color9:      #ff8278
+!! green dark/light
+*color2:      #bde077
+*color10:     #bde077
+!! yellow dark/light
+*color3:      #eadc84
+*color11:     #eadc84
+!! blue dark/light
+*color4:      #77bee0
+*color12:     #77bee0
+!! magenta dark/light
+*color5:      #dd91f3
+*color13:     #dd91f3
+!! cyan dark/light
+*color6:      #ffc178
+*color14:     #ffc178
+!! white dark/light
+*color7:      #dddddd
+*color15:     #cccccc
+
+
+
+
+!! Xft
+URxvt.letterSpace: -2
+Xft.antialias: true
+Xft.rgba: rgb
+Xft.hinting: true
+Xft.hintstyle: hintfull
+!!
+*font: -*-*-medium-*-*-*-20-*-*-*-*-*-*-*
+*faceName: -*-*-medium-*-*-*-20-*-*-*-*-*-*-*
+*fontName: -*-*-medium-*-*-*-20-*-*-*-*-*-*-*
+!*faceSize: -*-*-medium-*-*-*-20-*-*-*-*-*-*-*
+!*font: xft:Droid Sans Mono:medium:pixelsize=21
+!*faceName: xft:Droid Sans Mono:medium:pixelsize=21
+!*fontName: xft:Droid Sans Mono:medium:pixelsize=21
+
+!! fix invisible underscores (_) in URxvt
+!*.scaleHeight: 1.01
+
+!! *rxvt*
+*.perl-ext-common: default,matcher
+*.urlLauncher: $BROWSER
+*.matcher.button: 2
+*matcher.pattern.1: \\b(ssh|mailto|http|https|ftp|file|git):[/]*[\\w-]\\.[\\w./?&@#-]*[\\w/-]
+*matcher.pattern.2: \\bwww\\.[\\w-]\\.[\\w./?&@#-]*[\\w/-]
+*matcher.pattern.3: \\b(ssh|mailto|http|https|ftp|file|git):\/\/[\\w-.]*\/[\\w./?&@#-]*.(jpg|jpeg|png)
+*matcher.launcher.3: feh $0
+*scrollBar_right: false
+*scrollBar: false
+*borderLess: false
+*cursorBlink: false
+*transparent: false
+!*shading: 22
+*inheritPixmap: false
+*saveLines: 4096
+*.saveLines: 4096
+*.termName: Terminal
+*internalBorder: 25
+
+!*locale: UTF-8
+!*locale: true
+
+
+!! Xterm
+*metaSendsEscape: True
+!!*VT100*colorULMode: on
+!!*VT100*underLine: on
+!!*VT100*colorUL: red
+
+!! Xcursor
+Xcursor*theme: adwaita+
