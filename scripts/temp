@@ -1,0 +1,11 @@
+#!/usr/bin/bash
+
+temp0=$(sensors | grep "Core 0" | sed -r 's/.*\+([0-9.°C]+)[ \t].\(.*.*\..*/\1/g' | sed -r 's/([0-9]+).[0-9]+°C/\1/g')
+temp1=$(sensors | grep "Core 1" | sed -r 's/.*\+([0-9.°C]+)[ \t].\(.*.*\..*/\1/g' | sed -r 's/([0-9]+).[0-9]+°C/\1/g')
+
+if (( temp0 > temp1 )); then
+	echo "${temp0}°C"
+else
+	echo "${temp1}°C"
+fi
+

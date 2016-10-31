@@ -1,91 +1,73 @@
-!! ~/.Xresources
-!! brotip: ln -s ~/.Xresources ~/.Xdefaults
+!#include "/home/nk404/.cli_colors/simple_rainbow"
 
-!! simple_rainbow
-!! created by nulti.korisnik
-!! got ideas from themes like zenburn and other "pastel" ones
-!!
-*background:  #575757
-!! dcdccc
-*foreground:  #D1D1C2
-!*cursorColor: #888888
-*fading:      30
-!*fadeColor:   #575757
-!! black dark/light
-*color0:      #666666
-*color8:      #888888
-!! red dark/light
-*color1:      #ff8278
-*color9:      #ff8278
-!! green dark/light
-*color2:      #bde077
-*color10:     #bde077
-!! yellow dark/light
-*color3:      #eadc84
-*color11:     #eadc84
-!! blue dark/light
-*color4:      #77bee0
-*color12:     #77bee0
-!! magenta dark/light
-*color5:      #dd91f3
-*color13:     #dd91f3
-!! cyan dark/light
-*color6:      #ffc178
-*color14:     #ffc178
-!! white dark/light
-*color7:      #dddddd
-*color15:     #cccccc
+#define bgColor #1d2021
+#define fgColor #ebdbb2
 
+*background:  bgColor
+*foreground:  fgColor
+*fading:      100
+*fadeColor:   bgColor
 
+*color0:	#282828
+*color8:	#928374
+
+*color1:	#cc241d
+*color9:	#fb4934
+
+*color2:	#98971a
+*color10:	#b8bb26
+
+*color3:	#d79921
+*color11:	#fabd2f
+
+*color4:	#458588
+*color12:	#83a598
+
+*color5:	#b16286
+*color13:	#d3869b
+
+*color6:	#689d6a
+*color14:	#8ec07c
+
+*color7:	#a89984
+*color15:	#ebdbb2
 
 
 !! Xft
-URxvt.letterSpace: -2
 Xft.antialias: true
 Xft.rgba: rgb
 Xft.hinting: true
 Xft.hintstyle: hintfull
-!!
-*font: -*-*-medium-*-*-*-20-*-*-*-*-*-*-*
-*faceName: -*-*-medium-*-*-*-20-*-*-*-*-*-*-*
-*fontName: -*-*-medium-*-*-*-20-*-*-*-*-*-*-*
-!*faceSize: -*-*-medium-*-*-*-20-*-*-*-*-*-*-*
-!*font: xft:Droid Sans Mono:medium:pixelsize=21
-!*faceName: xft:Droid Sans Mono:medium:pixelsize=21
-!*fontName: xft:Droid Sans Mono:medium:pixelsize=21
 
-!! fix invisible underscores (_) in URxvt
-!*.scaleHeight: 1.01
+*font: xft:Terminus:size=10
 
-!! *rxvt*
-*.perl-ext-common: default,matcher
-*.urlLauncher: $BROWSER
-*.matcher.button: 2
-*matcher.pattern.1: \\b(ssh|mailto|http|https|ftp|file|git):[/]*[\\w-]\\.[\\w./?&@#-]*[\\w/-]
-*matcher.pattern.2: \\bwww\\.[\\w-]\\.[\\w./?&@#-]*[\\w/-]
-*matcher.pattern.3: \\b(ssh|mailto|http|https|ftp|file|git):\/\/[\\w-.]*\/[\\w./?&@#-]*.(jpg|jpeg|png)
-*matcher.launcher.3: feh $0
-*scrollBar_right: false
-*scrollBar: false
-*borderLess: false
-*cursorBlink: false
-*transparent: false
-!*shading: 22
-*inheritPixmap: false
-*saveLines: 4096
-*.saveLines: 4096
-*.termName: Terminal
-*internalBorder: 25
+!!!!!!!!!!!!!!!!!!! ROFI !!!!!!!!!!!!!!!!!!!!
+!rofi.opacity:                        80
+!rofi.width:                          50
+!rofi.lines:                          15
+!rofi.columns:                        1
+!rofi.color-normal:                   #212121,#1793d1,#212121,#586e75,#eee8d5
+!rofi.color-urgent:                   #fdf6e3,#dc322f,#eee8d5,#dc322f,#fdf6e3
+!rofi.color-active:                   #fdf6e3,#268bd2,#eee8d5,#268bd2,#fdf6e3
+!rofi.color-window:                   #212121,#002b36
+!rofi.padding:                        150
+!rofi.regex:                          true
+!rofi.separator-style:                none
+!rofi.fullscreen:                     false
+!rofi.threads:                        2
+!rofi.modi:                           run
+!rofi.opacity:                        80
+rofi.width:                          1366
+rofi.lines:                          20
+!rofi.columns:                        20
+rofi.font:                           xft:DejaVuSans:size=12
+rofi.color-normal:                   #212121,#1793d1,#212121,#586e75,#eee8d5
+!rofi.bw:                             0
+!rofi.location:                       0
+!rofi.terminal:                       termite
+!rofi.eh:                             10
+!rofi.regex:                          true
+!rofi.fullscreen:                     true
+!rofi.fake-transparency:              false
+!rofi.threads:                        1
 
-!*locale: UTF-8
-!*locale: true
-
-
-!! Xterm
-*metaSendsEscape: True
-!!*VT100*colorULMode: on
-!!*VT100*underLine: on
-!!*VT100*colorUL: red
-
-!! Xcursor
-Xcursor*theme: adwaita+

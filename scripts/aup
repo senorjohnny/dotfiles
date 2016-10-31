@@ -1,0 +1,14 @@
+#!/usr/bin/bash
+
+sudo echo -n "Starting apache..."
+sudo systemctl start httpd
+echo "done"
+if [ $# -eq 1 ]
+then
+	if [ $1 == '-m' ]
+	then
+		echo -n "Starting mysql..."
+		sudo systemctl start mysqld
+		echo "done"
+	fi
+fi

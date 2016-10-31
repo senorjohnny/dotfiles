@@ -3,7 +3,7 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-export PATH=$PATH:/home/$(whoami)/.bin
+export PATH=$PATH:/home/$(whoami)/.bin:/home/$(whoami)/.torch/bin:/opt/anaconda2/bin/
 
 # Startovanje X
 [[ -z $DISPLAY && $XDG_VTNR -eq 1 ]] && (exec startx) && (numlockx &)
@@ -28,6 +28,7 @@ alias fuck='sudo $(history -p \!\!)'
 alias memtest='sudo memtest'
 alias doctrine='php doctrine.php'
 alias t='todo.sh'
+alias x='exit'
 
 # cause i'm retarded
 alias sl='ls'
@@ -57,8 +58,13 @@ alias files='echo "There are total $(ls -l | grep -E "^-.*" | wc -l) files in th
 alias folders='echo "There are total $(ls -l | grep -E "^d.*" | wc -l) directories in this folder"'
 
 # die
-alias ukill='sudo killall --user $(whoami)'
+alias killme='sudo killall --user $(whoami)'
 
 # setup background
-$(feh --bg-scale ~/Pictures/star-trek-bg.png)
+$(feh --bg-scale ~/Pictures/Wallpapers/fog.jpg)
+
+# Keystrokes rate and frequency to 300ms and 30Hz
+xset r rate 280 25
+
+alias xreset='xrdb ~/.Xresources'
 

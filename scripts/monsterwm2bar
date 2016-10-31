@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+ff="/tmp/monsterwm.fifo"
+[[ -p $ff ]] || mkfifo -m 600 "$ff"
+
+# desktop names
+ds=("Term" "Web" "All")
+
+Clock() {
+	DATETIME=$(date "+%d.%m.%Y %H:%M")
+	echo -n "$DATETIME"
+}
+Battery() {
+	BATPERC=$(acpi --battery | cut -d, -f2)
+	echo "Battery: [$BATPERC]"
+}
+Network() {
+	NETPERC=$(cat /proc/net/wireless | grep wlo1 | sed -n 's/.*\: \([0-9]\+\)[ ]\+\([0-9]\+\)\..*/\2/p')
+	SSID=$(iwgetid -r)
+	echo "$SSID [$NETPERC%]"
+}
+Volume() {
+	VOLPERC=$(amixer | head -5 | tail -1 | sed -n 's/.*\[\([0-9]\+\)%\].*/\1/p')
+	echo "Volume: [$VOLPERC%]"
+}
+
+
+while read -t 60 -r wmout || true; do
+    if [[ $wmout =~ ^(([[:digit:]]+:)+[[:digit:]]+ ?)+$ ]]; then
+        read -ra desktops <<< "$wmout" && unset r
+        for desktop in "${desktops[@]}"; do
+            IFS=':' read -r d w m c u <<< "$desktop"
+            ((c)) && fg="%{F#FDFDFD}" || fg="%{F#8E8E8E}"
+            ((u)) && w+='\f5!'
+            r+="$fg${ds[$d]} [${w}] %{-F}"
+        done
+        r="${r%::*}"
+    fi
+#    printf "\\\l%s\\\r%s\n" "$r\\f5[\\f3$i\\f5]" "%{= Kr}$(date +"%F %R")"
+	
+    printf "%s%s\n" "$r" "%{r}%{F#EAEAEA} | $(Volume) | $(Network) | $(Battery) |%{F-} %{F#DDDDDD} $(Clock) %{F-}%{r-}"
+
+done < "$ff" | bar -g 1366x24&
+
+# pass output to fifo
+monsterwm > "$ff"
