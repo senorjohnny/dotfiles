@@ -35,13 +35,20 @@ set t_Co=256 			" oh holiest of all, give me some color!
 
 " indenting, wraps and tabs
 set shiftwidth=4
-set tabstop=4
+set tabstop=8
+set softtabstop=0
 set cindent
-set smartindent
-set autoindent 
+"set smartindent
+set smarttab
+set expandtab
+"set autoindent 
 set number
 set textwidth=120
 " set nowrap           " no wrapping for you today
+
+" Smart Haskell tabbing
+
+
 
 " searching
 set hlsearch
