@@ -1,0 +1,78 @@
+# Lines configured by zsh-newuser-install
+HISTFILE=~/.histfile
+HISTSIZE=1000
+SAVEHIST=10000
+setopt appendhistory autocd extendedglob nomatch
+unsetopt beep notify
+bindkey -v
+# End of lines configured by zsh-newuser-install
+# The following lines were added by compinstall
+zstyle :compinstall filename '/home/uros/.zshrc'
+
+autoload -Uz compinit
+compinit
+# End of lines added by compinstall
+
+# Let's make this shell usable lololo
+alias -g ls='ls -hl --color=always'
+alias -g lss='ls | grep "^d" && ls | grep -v "^d" | grep -E "^.(r|-)"'
+alias -g alog='cat $APACHE_LOG | tail -20'
+alias -g ares='(sudo systemctl stop httpd) && (sudo cat /dev/null > $APACHE_LOG) && (sudo systemctl start httpd)'
+alias -g up='sudo pacman -Syyuu'
+#alias -g fuck='sudo $($(echo !#))' ## TODO: darn that bash leftovers.
+alias -g memtest='sudo memtest'
+alias -g doctrine='php doctrine.php'
+alias -g x='exit'
+alias -g sl='ls'
+alias -g car='cat'
+alias -g cim='vim'
+alias -g netest='ping google.com -c 4'
+alias -g cdjunk='cd ~/.junk'
+alias -g rmjunk='rm -r ~/.junk/*'
+alias -g files='echo "There are total $(ls -l | grep -E "^-.*" | wc -l) files in this folder"'
+alias -g folders='echo "There are total $(ls -l | grep -E "^d.*" | wc -l) directories in this folder"'
+alias -g killme='sudo killall --user $(whoami)'
+alias -g rpwd='pwd | sed -e "s|$HOME|~|g"'
+alias -g xreset='xrdb ~/.Xresources'
+
+# Some vars
+export EDITOR=vim
+export VISUAL=vim
+export PAGER=less
+export TERM=xterm
+export LANG=en_US.UTF-8
+export LC_MESSAGES="C"
+
+# Upload this thing
+transfer() { if [ $# -eq 0 ]; then echo "No arguments specified. Usage:\necho transfer /tmp/test.md\ncat /tmp/test.md | transfer test.md"; return 1; fi
+tmpfile=$( mktemp -t transferXXX ); if tty -s; then basefile=$(basename "$1" | sed -e 's/[^a-zA-Z0-9._-]/-/g'); curl --progress-bar --upload-file "$1" "https://transfer.sh/$basefile" >> $tmpfile; else curl --progress-bar --upload-file "-" "https://transfer.sh/$1" >> $tmpfile ; fi; cat $tmpfile; rm -f $tmpfile; }
+
+# setup background
+$(feh --bg-scale ~/Pictures/Wallpapers/forest.jpg)
+
+# Keystrokes rate and frequency to 300ms and 30Hz
+xset r rate 280 25
+
+# Screen blanking turned off
+xset s off
+
+# stty erase "^H"
+# 
+# # Pokreni tmux pri svakom pokretanju bash-a 
+[[ $- != *i* ]] && return
+[[ -z "$TMUX" ]] && exec tmux
+
+# Autocomplete like a bos
+zstyle ':completion:*' menu select
+setopt COMPLETE_ALIASES
+
+# Use the history the smart way
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+[[ -n "$key[Up]"   ]] && bindkey -- "$key[Up]"   up-line-or-beginning-search
+[[ -n "$key[Down]" ]] && bindkey -- "$key[Down]" down-line-or-beginning-search
+
+# Prompting
+PROMPT="[%n: %1~> "
+
