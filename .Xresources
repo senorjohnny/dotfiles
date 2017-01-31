@@ -39,7 +39,10 @@ Xft.rgba: rgb
 Xft.hinting: true
 Xft.hintstyle: hintfull
 
-*font: xft:Terminus:size=10
+! URXVT
+URxvt*saveLines:0k
+
+URxvt*font: xft:terminus:size=10
 
 !!!!!!!!!!!!!!!!!!! ROFI !!!!!!!!!!!!!!!!!!!!
 !rofi.opacity:                        80
@@ -60,7 +63,7 @@ Xft.hintstyle: hintfull
 rofi.width:                          1366
 rofi.lines:                          20
 !rofi.columns:                        20
-rofi.font:                           xft:DejaVuSans:size=12
+rofi.font:                           xft:Terminus:size=12
 rofi.color-normal:                   #212121,#1793d1,#212121,#586e75,#eee8d5
 !rofi.bw:                             0
 !rofi.location:                       0
