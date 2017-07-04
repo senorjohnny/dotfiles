@@ -1,0 +1,11 @@
+#!/usr/bin/sh
+
+if [ $# -ne 1 ];
+then
+    echo 'You must provide classname'
+    exit
+fi
+
+touch include/$1.hpp
+touch src/$1.cpp
+

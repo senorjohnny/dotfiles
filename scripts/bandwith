@@ -1,0 +1,51 @@
+#!/usr/bin/node
+
+function currentSeconds() {
+    let now    = new Date().getTime(),
+    monthStart = new Date();
+
+    monthStart.setDate(1);
+    monthStart.setHours(0);
+    monthStart.setMinutes(0);
+    monthStart.setSeconds(0);
+    monthStart.setMilliseconds(0);
+    return Math.floor((now - monthStart.getTime()) / 1000);
+}
+
+function monthSeconds() {
+    let monthStart = new Date();
+    let monthEnd   = new Date();
+
+    monthStart.setDate(1);
+    monthStart.setHours(0);
+    monthStart.setMinutes(0);
+    monthStart.setSeconds(0);
+    monthStart.setMilliseconds(0);
+
+    let maxDay = daysInMonth();
+    monthEnd.setDate(maxDay);
+    monthEnd.setHours(23);
+    monthEnd.setMinutes(59);
+    monthEnd.setSeconds(59);
+    monthEnd.setMilliseconds(999);
+
+    return Math.floor((monthEnd.getTime() - monthStart.getTime()) / 1000);
+}
+
+function round(num, number) {
+    let mult = Math.pow(10, number);
+    return Math.round(num*mult)/mult;
+}
+
+function daysInMonth() {
+    let currentDate = new Date();
+    let currentYear = currentDate.getFullYear();
+    let currentMonth = currentDate.getMonth() + 1;
+    return new Date(currentYear, currentMonth, 0).getDate();
+}
+
+let passed = currentSeconds();
+let total  = monthSeconds();
+
+let bandwith = round(40*(passed/total), 3);
+console.log(bandwith + " GB");

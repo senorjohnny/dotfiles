@@ -1,0 +1,13 @@
+#!/bin/sh
+
+exec rofi -show run -modi run \
+	-fullscreen \
+	-hide-scrollbar \
+	-font "mono 10" \
+	-line-margin 0 \
+	-separator-style none \
+	-line-padding 3 \
+	-bw 136 \
+	-color-window "#88000000, #88000000" \
+	-matching glob \
+	-terminal termite

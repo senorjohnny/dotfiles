@@ -4,11 +4,11 @@
 screenshot() {
 	case $1 in
 	full)
-		scrot "%Y-%m-%d_%s.png" -e 'mv $f ~/Pictures/Screenshots/' -q 100
+		scrot "%Y-%m-%d_%s_$RANDOM.png" -e 'mv $f ~/Pictures/Screenshots/' -q 100
 		;;
 	window)
 		sleep 3
-		scrot -s "%Y-%m-%d_%s.png" -e 'mv $f ~/Pictures/Screenshots/' -q 100
+		scrot -s "%Y-%m-%d_%s_$RANDOM.png" -e 'mv $f ~/Pictures/Screenshots/' -q 100
 		;;
 	*)
 		;;

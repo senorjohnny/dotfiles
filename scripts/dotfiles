@@ -1,0 +1,176 @@
+#!/usr/bin/env zsh
+
+# sources are positioned everywhere in $HOME, but repository
+# is localized, and this is where
+dest=".dotfiles"
+
+#version info
+version="dotfiles v0.1"
+
+# files from $HOME
+SOURCE_FILES=(
+	"/.vimrc"
+	"/.config/compton.conf"
+	"/.i3/config" "/.i3/i3blocks.conf" "/.i3/i3status.conf"
+	"/.spectrwm.conf" "/.spectrwm_bindings.conf"
+	"/.bashrc"
+	"/.zshrc"
+	"/.xinitrc"
+	"/.Xresources"
+	"/.tmux.conf"
+)
+
+# files in repository
+DEST_FILES=(
+	"/vimrc"
+	"/compton.conf"
+	"/i3/config" "/i3/i3blocks.conf" "/i3/i3status.conf"
+	"/spectrwm.conf" "/spectrwm_bindings.conf"
+	"/bashrc"
+	"/zshrc"
+	"/xinitrc"
+	"/Xresources"
+	"/tmux.conf"
+)
+
+# So, sometimes I forget to include both source and destination
+if [[ $#SOURCE_FILES -ne $#DEST_FILES ]] then
+	echo "There is a bug in the script. Source and Destination not equal."
+	exit
+fi
+
+# Prints version
+function print_version {
+	echo $version
+}
+
+# Prints error message
+function print_error {
+	echo "$1 For usage, see:"
+	echo "    dotfiles --help"
+}
+
+# Prints help
+function print_help {
+	print_version
+	echo "usage: dotfiles <command>"
+	echo "  --help\tprints this message"
+	echo "  --check\tprints files that differ"
+	echo "  --check-diff\tprints files that differ and their diff"
+	echo "  --copy\tcopies all local files to the repository. CAUTION!!!"
+	echo "  --print\tprints locations of source files"
+	echo "  --validate\tprints nothing if source files are found"
+	echo "  --version\tprints version info"
+}
+
+# Checks if there is any difference between source files
+# and those in repository. Prints filenames of those that differ
+function check {
+	for (( i = 1; i <= $#SOURCE_FILES; i++ )) do
+		(
+			source_file="$HOME/${SOURCE_FILES[i]}"
+			dest_file="$HOME/$dest/${DEST_FILES[i]}"
+			if [[ ! -f $source_file ]] then
+				echo "file $SOURCE_FILES[i] missing in local system"
+				continue
+			fi
+			if [[ ! -f $dest_file ]] then
+				echo "file $SOURCE_FILES[i] missing in repository"
+				continue
+			fi
+			check_source=$(md5sum $source_file | awk '{print $1;}')
+			check_dest=$(md5sum $dest_file | awk '{print $1;}')
+			if [[ $check_source != $check_dest ]] then
+				echo $SOURCE_FILES[i]
+			fi
+		)
+	done
+}
+
+# Same as previous but also print diff beteween files
+function check_diff {
+	for (( i = 1; i <= $#SOURCE_FILES; i++ )) do
+		(
+			source_file="$HOME/${SOURCE_FILES[i]}"
+			dest_file="$HOME/$dest/${DEST_FILES[i]}"
+			if [[ ! -f $source_file ]] then
+				echo "file $SOURCE_FILES[i] missing in local system"
+				continue
+			fi
+			if [[ ! -f $dest_file ]] then
+				echo "file $SOURCE_FILES[i] missing in repository"
+				continue
+			fi
+			check_source=$(md5sum $source_file | awk '{print $1;}')
+			check_dest=$(md5sum $dest_file | awk '{print $1;}')
+			if [[ $check_source != $check_dest ]] then
+				echo "file ${SOURCE_FILES[i]} changed:"
+				diff $source_file $dest_file
+				echo ""
+			fi
+		)
+	done
+}
+
+# Copies files from local to repository and commites changes
+# Use this with caution, always check the changes with --check option.
+function copy {
+	for (( i = 1; i <= $#SOURCE_FILES; i++ )) do
+		(
+			source_file="$HOME/${SOURCE_FILES[i]}"
+			dest_file="$HOME/$dest/${DEST_FILES[i]}"
+			echo -ne "copying ~${SOURCE_FILES[i]}\t\t"
+			err=$(cp $source_file $dest_file 2>&1)
+			if [[ -z $err ]] then
+				echo "success"
+			else
+				echo "failed"
+				echo "$err"
+			fi
+		)
+	done
+}
+
+# Prints all files that are registered for monitoring
+function print_files {
+	for (( i = 1; i <= $#SOURCE_FILES; i++ )) do
+		(
+			echo "${SOURCE_FILES[i]}"
+		)
+	done
+}
+
+# Validates that all listed local files are present
+function validate {
+	for (( i = 1; i <= $#SOURCE_FILES; i++ )) do
+		(
+			source_file="$HOME/${SOURCE_FILES[i]}"
+			if [[ ! -f $source_file ]] then
+				echo "${SOURCE_FILES[i]} not found"
+			fi
+		)
+	done
+}
+
+if [[ $# -eq 1 ]] then
+	if [[ $1 == "--help" ]] then
+		print_help
+	elif [[ $1 == "--check" ]] then		# IN CASE OF --check CHECK FOR NEW
+		check
+	elif [[ $1 == "--check-diff" ]] then # IN CASE OF --check CHECK FOR NEW
+		check_diff
+	elif [[ $1 == "--copy" ]] then		# IN CASE OF --copy COPY SOURCES
+		copy
+	elif [[ $1 == "--print" ]] then		# IN CASE OF --print PRINT SOURCES
+		print_files
+	elif [[ $1 == "--validate" ]] then	# IN CASE OF --validate CHECK SOURCES
+		validate
+	elif [[ $1 == "--version" ]] then
+		print_version
+	else								# IN CASE OF UNKNOWN ARG PRINT ERR
+		print_error "Unknown option \"$1\"."
+	fi
+else									# IN CASE OF MULTIPLE ARGS PRINT ERR
+	print_error "Invalid number of arguments."
+fi
+
