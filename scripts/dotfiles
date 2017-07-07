@@ -69,33 +69,42 @@ function print_help {
 # Checks if there is any difference between source files
 # and those in repository. Prints filenames of those that differ
 function check {
+	has_some=0
 	for (( i = 1; i <= $#SOURCE_FILES; i++ )) do
 		(
-			source_file=$(readlink -f "$HOME/${SOURCE_FILES[i]}")		# readlink trick removes // in path with /
-			dest_file=$(readlink -f "$HOME/$dest/${DEST_FILES[i]}")		# readlink trick removes // in path with /
+			source_file=$(readlink -f "$HOME/${SOURCE_FILES[i]}")		# readlink trick replaces // in path with /
+			dest_file=$(readlink -f "$HOME/$dest/${DEST_FILES[i]}")		# readlink trick replaces // in path with /
 			if [[ ! -f $source_file ]] then
 				echo "file $SOURCE_FILES[i] missing in local system"
+				has_some=1
 				continue
-			fi
-			if [[ ! -f $dest_file ]] then
+			elif [[ ! -f $dest_file ]] then
 				echo "file $SOURCE_FILES[i] missing in repository"
+				has_some=1
 				continue
 			fi
 			check_source=$(md5sum $source_file | awk '{print $1;}')
 			check_dest=$(md5sum $dest_file | awk '{print $1;}')
 			if [[ $check_source != $check_dest ]] then
-				echo "file ${SOURCE_FILES[i]} changed"
+				src=$(basename $source_file)
+				if [[ "$source_file" -nt "$dest_file" ]] then
+					echo "[source -> repo]: $src"
+				else
+					echo "[repo -> source]: $src"
+				fi
+				has_some=1
 			fi
 		)
 	done
+	return $has_some
 }
 
 # Same as previous but also print diff beteween files
 function check_diff {
 	for (( i = 1; i <= $#SOURCE_FILES; i++ )) do
 		(
-			source_file=$(readlink -f "$HOME/${SOURCE_FILES[i]}")		# readlink trick removes // in path with /
-			dest_file=$(readlink -f "$HOME/$dest/${DEST_FILES[i]}")		# readlink trick removes // in path with /
+			source_file=$(readlink -f "$HOME/${SOURCE_FILES[i]}")		# readlink trick replaces // in path with /
+			dest_file=$(readlink -f "$HOME/$dest/${DEST_FILES[i]}")		# readlink trick replaces // in path with /
 			if [[ ! -f $source_file ]] then
 				echo "file $SOURCE_FILES[i] missing in local system"
 				continue
@@ -107,7 +116,12 @@ function check_diff {
 			check_source=$(md5sum $source_file | awk '{print $1;}')
 			check_dest=$(md5sum $dest_file | awk '{print $1;}')
 			if [[ $check_source != $check_dest ]] then
-				echo "file ${SOURCE_FILES[i]} changed:"
+				src=$(basename $source_file)
+				if [[ "$source_file" -nt "$dest_file" ]] then
+					echo "[source -> repo]: $src"
+				else
+					echo "[repo -> source]: $src"
+				fi
 				diff $source_file $dest_file
 				echo ""
 			fi
@@ -154,58 +168,77 @@ function validate {
 		)
 	done
 }
+function is_confirmed {
+    read -rs -k 1 ans
+    case "${ans}" in
+    y|Y|$'\n')
+        return 0
+        ;;
+    *)  # This is the default
+        return 1
+    esac
+}
 
 # Syncs automatically in both directions
 function sync_files {
-	for (( i = 1; i <= $#SOURCE_FILES; i++ )) do
-		(
-			source_file=$(readlink -f "$HOME/${SOURCE_FILES[i]}")		# readlink trick removes // in path with /
-			dest_file=$(readlink -f "$HOME/$dest/${DEST_FILES[i]}")		# readlink trick removes // in path with /
-			if [[ ! -f $source_file ]] then
-				src_dir=$(dirname $source_file)
-				src=$(basename $source_file)
-				mkdir -p $src_dir
-				err=$(cp $dest_file $source_file 2>&1)
-				if [[ -z err ]] then
-					echo "[repo -> source]: $src -- FAILED: $err"
-				else
-					echo "[repo -> source]: $src"
-				fi
-			fi
-			if [[ ! -f $dest_file ]] then
-				dest_dir = $(dirname $dest_file)
-				src=$(basename $source_file)
-				mkdir -p $dest_dir
-				err=$(cp $source_file $dest_file 2>&1)
-				if [[ -z err ]] then
-					echo "[source -> repo]: $src -- FAILED: $err"
-				else
-					echo "[source -> repo]: $src"
-				fi
-				continue
-			fi
-			check_source=$(md5sum $source_file | awk '{print $1;}')
-			check_dest=$(md5sum $dest_file | awk '{print $1;}')
-			if [[ $check_source != $check_dest ]] then
-				src=$(basename $source_file)
-				if [[ "$source_file" -nt "$dest_file" ]] then
-					err=$(cp $source_file $dest_file 2>&1)
-					if [[ -z err ]] then
-						echo "[source -> repo]: $src -- FAILED"
-					else
-						echo "[source -> repo]: $src"
+	if check; then
+		echo ""
+		echo -n ":: Commit the changes? [Y/n] "
+		if is_confirmed; then
+			echo ""
+			for (( i = 1; i <= $#SOURCE_FILES; i++ )) do
+				(
+					source_file=$(readlink -f "$HOME/${SOURCE_FILES[i]}")		# readlink trick replaces // in path with /
+					dest_file=$(readlink -f "$HOME/$dest/${DEST_FILES[i]}")		# readlink trick replaces // in path with /
+					if [[ ! -f $source_file ]] then
+						src_dir=$(dirname $source_file)
+						src=$(basename $source_file)
+						mkdir -p $src_dir
+						err=$(cp $dest_file $source_file 2>&1)
+						if [[ -z err ]] then
+							echo "[repo -> source]: $src -- FAILED: $err"
+						else
+							echo "[repo -> source]: $src"
+						fi
 					fi
-				else
-					err=$(cp $dest_file $source_file 2>&1)
-					if [[ -z err ]] then
-						echo "[repo -> source]: $src -- FAILED: $err"
-					else
-						echo "[repo -> source]: $src"
+					if [[ ! -f $dest_file ]] then
+						dest_dir = $(dirname $dest_file)
+						src=$(basename $source_file)
+						mkdir -p $dest_dir
+						err=$(cp $source_file $dest_file 2>&1)
+						if [[ -z err ]] then
+							echo "[source -> repo]: $src -- FAILED: $err"
+						else
+							echo "[source -> repo]: $src"
+						fi
+						continue
 					fi
-				fi
-			fi
-		)
-	done
+					check_source=$(md5sum $source_file | awk '{print $1;}')
+					check_dest=$(md5sum $dest_file | awk '{print $1;}')
+					if [[ $check_source != $check_dest ]] then
+						src=$(basename $source_file)
+						if [[ "$source_file" -nt "$dest_file" ]] then
+							err=$(cp $source_file $dest_file 2>&1)
+							if [[ -z err ]] then
+								echo "[source -> repo]: $src -- FAILED"
+							else
+								echo "[source -> repo]: $src"
+							fi
+						else
+							err=$(cp $dest_file $source_file 2>&1)
+							if [[ -z err ]] then
+								echo "[repo -> source]: $src -- FAILED: $err"
+							else
+								echo "[repo -> source]: $src"
+							fi
+						fi
+					fi
+				)
+			done
+		else
+			echo ""
+		fi
+	fi
 }
 
 
