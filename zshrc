@@ -126,3 +126,9 @@ zle -N down-line-or-beginning-search
 
 # tmux color-fix
 #alias tmux="TERM=screen-256color-bce tmux"
+
+# Fixing HOME/DEL keys
+bindkey '^[[3~' delete-char
+bindkey '^[[1~' beginning-of-line
+bindkey '^[[4~' end-of-line
+
