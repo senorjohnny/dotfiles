@@ -1,0 +1,3 @@
+#!/usr/bin/env zsh
+
+jetbrains-toolbox --log-path /home/uros/.log/jetbrains
