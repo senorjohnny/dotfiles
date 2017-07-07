@@ -61,6 +61,7 @@ function print_help {
 	echo "  --check-diff\tprints files that differ and their diff"
 	echo "  --copy\tcopies all local files to the repository. CAUTION!!!"
 	echo "  --print\tprints locations of source files"
+	echo "  --sync\tsync everything automatically"
 	echo "  --validate\tprints nothing if source files are found"
 	echo "  --version\tprints version info"
 }
@@ -70,8 +71,8 @@ function print_help {
 function check {
 	for (( i = 1; i <= $#SOURCE_FILES; i++ )) do
 		(
-			source_file="$HOME/${SOURCE_FILES[i]}"
-			dest_file="$HOME/$dest/${DEST_FILES[i]}"
+			source_file=$(readlink -f "$HOME/${SOURCE_FILES[i]}")		# readlink trick removes // in path with /
+			dest_file=$(readlink -f "$HOME/$dest/${DEST_FILES[i]}")		# readlink trick removes // in path with /
 			if [[ ! -f $source_file ]] then
 				echo "file $SOURCE_FILES[i] missing in local system"
 				continue
@@ -93,8 +94,8 @@ function check {
 function check_diff {
 	for (( i = 1; i <= $#SOURCE_FILES; i++ )) do
 		(
-			source_file="$HOME/${SOURCE_FILES[i]}"
-			dest_file="$HOME/$dest/${DEST_FILES[i]}"
+			source_file=$(readlink -f "$HOME/${SOURCE_FILES[i]}")		# readlink trick removes // in path with /
+			dest_file=$(readlink -f "$HOME/$dest/${DEST_FILES[i]}")		# readlink trick removes // in path with /
 			if [[ ! -f $source_file ]] then
 				echo "file $SOURCE_FILES[i] missing in local system"
 				continue
@@ -154,6 +155,60 @@ function validate {
 	done
 }
 
+# Syncs automatically in both directions
+function sync_files {
+	for (( i = 1; i <= $#SOURCE_FILES; i++ )) do
+		(
+			source_file=$(readlink -f "$HOME/${SOURCE_FILES[i]}")		# readlink trick removes // in path with /
+			dest_file=$(readlink -f "$HOME/$dest/${DEST_FILES[i]}")		# readlink trick removes // in path with /
+			if [[ ! -f $source_file ]] then
+				src_dir=$(dirname $source_file)
+				src=$(basename $source_file)
+				mkdir -p $src_dir
+				err=$(cp $dest_file $source_file 2>&1)
+				if [[ -z err ]] then
+					echo "[repo -> source]: $src -- FAILED: $err"
+				else
+					echo "[repo -> source]: $src"
+				fi
+			fi
+			if [[ ! -f $dest_file ]] then
+				dest_dir = $(dirname $dest_file)
+				src=$(basename $source_file)
+				mkdir -p $dest_dir
+				err=$(cp $source_file $dest_file 2>&1)
+				if [[ -z err ]] then
+					echo "[source -> repo]: $src -- FAILED: $err"
+				else
+					echo "[source -> repo]: $src"
+				fi
+				continue
+			fi
+			check_source=$(md5sum $source_file | awk '{print $1;}')
+			check_dest=$(md5sum $dest_file | awk '{print $1;}')
+			if [[ $check_source != $check_dest ]] then
+				src=$(basename $source_file)
+				if [[ "$source_file" -nt "$dest_file" ]] then
+					err=$(cp $source_file $dest_file 2>&1)
+					if [[ -z err ]] then
+						echo "[source -> repo]: $src -- FAILED"
+					else
+						echo "[source -> repo]: $src"
+					fi
+				else
+					err=$(cp $dest_file $source_file 2>&1)
+					if [[ -z err ]] then
+						echo "[repo -> source]: $src -- FAILED: $err"
+					else
+						echo "[repo -> source]: $src"
+					fi
+				fi
+			fi
+		)
+	done
+}
+
+
 if [[ $# -eq 1 ]] then
 	if [[ $1 == "--help" ]] then
 		print_help
@@ -165,6 +220,8 @@ if [[ $# -eq 1 ]] then
 		copy
 	elif [[ $1 == "--print" ]] then		# IN CASE OF --print PRINT SOURCES
 		print_files
+	elif [[ $1 == "--sync" ]] then		# IN CASE OF --sync SYNC ALL
+		sync_files
 	elif [[ $1 == "--validate" ]] then	# IN CASE OF --validate CHECK SOURCES
 		validate
 	elif [[ $1 == "--version" ]] then
