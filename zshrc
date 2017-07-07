@@ -23,6 +23,7 @@ alias -g ls='ls -hl --color=always'
 alias -g lss='ls | grep "^d" && ls | grep -v "^d" | grep -E "^.(r|-)"'
 alias -g alog='cat $APACHE_LOG | tail -20'
 alias -g ares='(sudo systemctl stop httpd) && (sudo cat /dev/null > $APACHE_LOG) && (sudo systemctl start httpd)'
+alias -g pacman='sudo pacman --color always'
 alias -g up='sudo pacman -Syyuu'
 #alias -g fuck='sudo $($(echo !#))' ## TODO: darn that bash leftovers.
 alias -g memtest='sudo memtest'
