@@ -18,6 +18,7 @@ SOURCE_FILES=(
 	"/.xinitrc"
 	"/.Xresources"
 	"/.tmux.conf"
+	"/.config/nvim/init.vim"
 )
 
 # files in repository
@@ -31,6 +32,7 @@ DEST_FILES=(
 	"/xinitrc"
 	"/Xresources"
 	"/tmux.conf"
+	"/nvim/init.vim"
 )
 
 # So, sometimes I forget to include both source and destination
@@ -81,7 +83,7 @@ function check {
 			check_source=$(md5sum $source_file | awk '{print $1;}')
 			check_dest=$(md5sum $dest_file | awk '{print $1;}')
 			if [[ $check_source != $check_dest ]] then
-				echo $SOURCE_FILES[i]
+				echo "file ${SOURCE_FILES[i]} changed"
 			fi
 		)
 	done
