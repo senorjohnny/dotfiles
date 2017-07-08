@@ -181,6 +181,7 @@ function is_confirmed {
 
 # Syncs automatically in both directions
 function sync_files {
+	echo "Files to be commited:"
 	if check; then
 		echo ""
 		echo -n ":: Commit the changes? [Y/n] "
@@ -238,6 +239,8 @@ function sync_files {
 		else
 			echo ""
 		fi
+	else
+		echo "<none>"
 	fi
 }
 

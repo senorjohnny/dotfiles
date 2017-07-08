@@ -69,7 +69,7 @@ bindsym XF86MonBrightnessDown exec xbacklight -dec 20
 ## Sound
 bindsym XF86AudioRaiseVolume exec amixer sset -q Master 5%+
 bindsym XF86AudioLowerVolume exec amixer sset -q Master 5%-
-bindsym XF86AudioMute exec amixer -D pulse set Master 1+ toggle
+bindsym XF86AudioMute (exec amixer -D pulse set Master 1+ toggle  && exec amixer sset Speaker toggle)
 
 ## Kill focused window
 bindsym $mod+q kill
@@ -85,6 +85,7 @@ bindsym $mod+$left	focus left
 bindsym $mod+$down	focus down
 bindsym $mod+$up	focus up
 bindsym $mod+$right	focus right
+bindsym Mod1+Tab	focus right
 
 ## Move focused window
 bindsym $mod+Shift+$left	move left
